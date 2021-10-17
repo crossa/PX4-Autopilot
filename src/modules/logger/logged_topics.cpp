@@ -52,11 +52,12 @@ void LoggedTopics::add_default_topics()
 	add_topic("actuator_controls_3", 100);
 	add_topic("actuator_controls_4", 100);
 	add_topic("actuator_controls_5", 100);
+	add_topic("actuator_controls_status_0", 300);
 	add_topic("airspeed", 1000);
 	add_topic("airspeed_validated", 200);
+	add_topic("autotune_attitude_control_status", 100);
 	add_topic("camera_capture");
 	add_topic("camera_trigger");
-	add_topic("camera_trigger_secondary");
 	add_topic("cellular_status", 200);
 	add_topic("commander_state");
 	add_topic("cpuload");
@@ -68,6 +69,7 @@ void LoggedTopics::add_default_topics()
 	add_topic("hover_thrust_estimate", 100);
 	add_topic("input_rc", 500);
 	add_topic("internal_combustion_engine_status", 10);
+	add_topic("magnetometer_bias_estimate", 200);
 	add_topic("manual_control_setpoint", 200);
 	add_topic("manual_control_switches");
 	add_topic("mission_result");
