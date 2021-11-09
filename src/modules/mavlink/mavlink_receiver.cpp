@@ -578,6 +578,8 @@ void MavlinkReceiver::handle_message_command_both(mavlink_message_t *msg, const 
 			}
 		}
 
+		_cmd_pub.publish(vehicle_command);
+
 	} else if (cmd_mavlink.command == MAV_CMD_DO_AUTOTUNE_ENABLE) {
 
 		bool has_module = true;
@@ -596,8 +598,7 @@ void MavlinkReceiver::handle_message_command_both(mavlink_message_t *msg, const 
 
 				switch (vehicle_status.vehicle_type) {
 				case vehicle_status_s::VEHICLE_TYPE_FIXED_WING:
-					/* atune_start = param_find("FW_AT_START"); */
-					atune_start = PARAM_INVALID;
+					atune_start = param_find("FW_AT_START");
 
 					break;
 
@@ -1270,6 +1271,7 @@ MavlinkReceiver::handle_message_set_actuator_control_target(mavlink_message_t *m
 		//bool ignore_setpoints = bool(actuator_target.group_mlx != 2);
 
 		offboard_control_mode_s offboard_control_mode{};
+		offboard_control_mode.actuator = true;
 		offboard_control_mode.timestamp = hrt_absolute_time();
 		_offboard_control_mode_pub.publish(offboard_control_mode);
 
@@ -1766,6 +1768,14 @@ MavlinkReceiver::handle_message_serial_control(mavlink_message_t *msg)
 {
 	mavlink_serial_control_t serial_control_mavlink;
 	mavlink_msg_serial_control_decode(msg, &serial_control_mavlink);
+
+	// Check if the message is targeted at us.
+	if ((serial_control_mavlink.target_system != 0 &&
+	     mavlink_system.sysid != serial_control_mavlink.target_system) ||
+	    (serial_control_mavlink.target_component != 0 &&
+	     mavlink_system.compid != serial_control_mavlink.target_component)) {
+		return;
+	}
 
 	// we only support shell commands
 	if (serial_control_mavlink.device != SERIAL_CONTROL_DEV_SHELL

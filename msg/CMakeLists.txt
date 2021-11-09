@@ -40,7 +40,9 @@ set(msg_files
 	actuator_armed.msg
 	actuator_controls.msg
 	actuator_controls_status.msg
+	actuator_motors.msg
 	actuator_outputs.msg
+	actuator_servos.msg
 	adc_report.msg
 	airspeed.msg
 	airspeed_validated.msg
@@ -73,6 +75,7 @@ set(msg_files
 	estimator_status_flags.msg
 	event.msg
 	follow_target.msg
+	failure_detector_status.msg
 	generator_status.msg
 	geofence_result.msg
 	gimbal_device_attitude_status.msg
