@@ -133,6 +133,7 @@ Mavlink::Mavlink() :
 	}
 
 	_event_sub.subscribe();
+	_telemetry_status_pub.advertise();
 }
 
 Mavlink::~Mavlink()
@@ -440,11 +441,11 @@ Mavlink::forward_message(const mavlink_message_t *msg, Mavlink *self)
 	if (meta) {
 		// Extract target system and target component if set
 		if (meta->flags & MAV_MSG_ENTRY_FLAG_HAVE_TARGET_SYSTEM) {
-			target_system_id = (_MAV_PAYLOAD(msg))[meta->target_system_ofs];
+			target_system_id = static_cast<uint8_t>((_MAV_PAYLOAD(msg))[meta->target_system_ofs]);
 		}
 
 		if (meta->flags & MAV_MSG_ENTRY_FLAG_HAVE_TARGET_COMPONENT) {
-			target_component_id = (_MAV_PAYLOAD(msg))[meta->target_component_ofs];
+			target_component_id = static_cast<uint8_t>((_MAV_PAYLOAD(msg))[meta->target_component_ofs]);
 		}
 	}
 
@@ -2314,8 +2315,6 @@ Mavlink::task_main(int argc, char *argv[])
 			if (_vehicle_status_sub.copy(&vehicle_status)) {
 				/* switch HIL mode if required */
 				set_hil_enabled(vehicle_status.hil_state == vehicle_status_s::HIL_STATE_ON);
-
-				set_generate_virtual_rc_input(vehicle_status.rc_input_mode == vehicle_status_s::RC_IN_MODE_GENERATED);
 
 				if (_mode == MAVLINK_MODE_IRIDIUM) {
 
